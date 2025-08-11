@@ -1,0 +1,12 @@
+# .gitignore dosyası
+
+# Python cache dosyalarını ve sanal ortamı yok say
+__pycache__/
+*.pyc
+venv/
+
+# Hassas yapılandırma dosyasını yok say
+.env
+
+# VS Code ayarlarını yok say
+.vscode/
