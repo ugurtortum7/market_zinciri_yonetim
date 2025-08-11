@@ -1,24 +1,20 @@
 import os
 from dotenv import load_dotenv
 
-# Bu komut, proje ana dizinindeki .env dosyasını bulur ve
-# içindeki değişkenleri ortam değişkeni olarak yükler.
 load_dotenv()
 
-# Artık tüm ayarları hard-coded yazmak yerine, os.getenv() ile
-# ortam değişkenlerinden (yani .env dosyasından) okuyoruz.
-DB_SERVER = os.getenv("DB_SERVER")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_NAME = os.getenv("DB_NAME")
-DB_DRIVER = os.getenv("DB_DRIVER")
+# Geçici olarak SQLite kullan (Railway deploy için)
+DATABASE_URL = "sqlite:///./app.db"
 
-# Eğer .env dosyasında bu değişkenler yoksa, varsayılan bir değer atayabiliriz.
-# Ama bizim dosyamızda hepsi var.
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM")
-# os.getenv string döndürdüğü için, sayıyı int'e çeviriyoruz.
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+# Diğer ayarlar
+SECRET_KEY = os.getenv("SECRET_KEY", "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
 
-# Veritabanı bağlantı cümlesi (DATABASE_URL) artık bu değişkenlerden oluşuyor.
-DATABASE_URL = f"mssql+pyodbc://{DB_USER}:{DB_PASSWORD}@{DB_SERVER}/{DB_NAME}?driver={DB_DRIVER}"
+# SQL Server ayarları yorum satırına al (geçici)
+# DB_SERVER = os.getenv("DB_SERVER")
+# DB_USER = os.getenv("DB_USER")
+# DB_PASSWORD = os.getenv("DB_PASSWORD")
+# DB_NAME = os.getenv("DB_NAME")
+# DB_DRIVER = os.getenv("DB_DRIVER")
+# DATABASE_URL = f"mssql+pyodbc://{DB_USER}:{DB_PASSWORD}@{DB_SERVER}/{DB_NAME}?driver={DB_DRIVER}"
