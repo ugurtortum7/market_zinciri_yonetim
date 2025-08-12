@@ -58,24 +58,48 @@ async def import_data(file: UploadFile = File(...)):
         data = json.loads(content.decode('utf-8'))
         db = SessionLocal()
         imported_tables = {}
-        
+
+        # JSON anahtarlarını model sınıflarına eşle
+        model_map = {
+            "kullanicilar": User,
+            "lokasyonlar": Lokasyon,
+            "urunler": Urun,
+            "stoklar": Stok,
+            "sevkiyatlar": Sevkiyat,
+            "sevkiyat_detaylari": SevkiyatDetay,
+            "satislar": Satis,
+            "satis_detaylari": SatisDetay,
+            "favoriler": Favori,
+            "sepetler": Sepet,
+            "sepet_urunleri": SepetUrunu,
+            "siparisler": Siparis,
+            "siparis_detaylari": SiparisDetay
+        }
+
         for table_name, records in data.items():
             try:
                 print(f"Import ediliyor: {table_name}")
-                if records:
-                    columns = list(records[0].keys())
-                    imported_count = 0
-                    for record in records:
-                        # Burada kendi modellerine göre insert işlemi yapabilirsin
-                        imported_count += 1
-                    imported_tables[table_name] = imported_count
-                    print(f"  {imported_count} kayıt import edildi")
+                Model = model_map.get(table_name)
+                if not Model:
+                    imported_tables[table_name] = "Eşleşen model bulunamadı"
+                    continue
+
+                imported_count = 0
+                for record in records:
+                    obj = Model(**record)
+                    db.add(obj)
+                    imported_count += 1
+
+                imported_tables[table_name] = imported_count
+                print(f"  {imported_count} kayıt import edildi")
+
             except Exception as e:
                 print(f"Hata - {table_name}: {str(e)}")
                 imported_tables[table_name] = f"Hata: {str(e)}"
         
         db.commit()
         db.close()
+
         return {
             "message": "Import işlemi tamamlandı",
             "imported_tables": imported_tables,
@@ -83,6 +107,7 @@ async def import_data(file: UploadFile = File(...)):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Import hatası: {str(e)}")
+
 
 @app.get("/admin/table-info")
 def get_table_info():

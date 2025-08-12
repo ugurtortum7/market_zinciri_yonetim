@@ -5,7 +5,7 @@ from .lokasyon import Lokasyon
 
 class UserBase(BaseModel):
     kullanici_adi: str
-    email: EmailStr
+    email: Optional[str] = None
     rol: str
     lokasyon_id: int
 
