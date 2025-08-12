@@ -1,0 +1,180 @@
+{
+  "kullanicilar": [
+    {
+      "id": 0,
+      "email": "admin@market.com",
+      "kullanici_adi": "admin",
+      "hashlenmis_sifre": "$argon2id$v=19$m=65536,t=3,p=4$whgDIGTsnRNCaG3tfQ+hlA$kG1r3tKbeb3yHID7aof1Q0GnSz++W5P7FPtgR5kKqZs",
+      "rol": "YONETICI",
+      "aktif": true,
+      "lokasyon_id": 1
+    },
+    {
+      "id": 1,
+      "email": "kasiyer.atasehir@market.com",
+      "kullanici_adi": "kasiyer1",
+      "hashlenmis_sifre": "$argon2id$v=19$m=65536,t=3,p=4$0tLdM3g9k/HlP8y6g1cK/w$9hLd6E8iHq2J7e9y7o1E2dG8bF9oX7sKp5xY8wG2fCg",
+      "rol": "KASIYER",
+      "aktif": true,
+      "lokasyon_id": 2
+    },
+    {
+      "id": 2,
+      "email": "musteri@ornek.com",
+      "kullanici_adi": "musteri1",
+      "hashlenmis_sifre": "$argon2id$v=19$m=65536,t=3,p=4$lU/uA8cK2m4r/X3p7bV9gA$sJ9yP8dG7kK5oL7wF6pW3cR4zX9vB8nU1qG3aH6sY5A",
+      "rol": "MUSTERI",
+      "aktif": true,
+      "lokasyon_id": null
+    }
+  ],
+  "satislar": [],
+  "favoriler": [],
+  "sepetler": [],
+  "siparisler": [],
+  "satis_detaylari": [],
+  "sepet_urunleri": [],
+  "siparis_detaylari": [],
+  "lokasyonlar": [
+    {
+      "id": 1,
+      "ad": "Merkez Depo",
+      "tip": "DEPO"
+    },
+    {
+      "id": 2,
+      "ad": "Ataşehir Süpermarket",
+      "tip": "SUPERMARKET"
+    },
+    {
+      "id": 3,
+      "ad": "Kadıköy Süpermarket",
+      "tip": "SUPERMARKET"
+    },
+    {
+      "id": 4,
+      "ad": "Beylikdüzü Süpermarket",
+      "tip": "SUPERMARKET"
+    }
+  ],
+  "urunler": [
+    {
+      "id": 1,
+      "urun_adi": "1L Tam Yağlı Süt",
+      "sku": "SUT-TY-1L",
+      "aciklama": "Günlük pastörize süt"
+    },
+    {
+      "id": 2,
+      "urun_adi": "500ml Sıvı Sabun",
+      "sku": "SIVI-SABUN-500ML",
+      "aciklama": "Okyanus esintili sıvı sabun"
+    },
+    {
+      "id": 3,
+      "urun_adi": "250gr Tost Ekmeği",
+      "sku": "EKMEK-250GR",
+      "aciklama": "Tost ve sandviçler için dilimli ekmek"
+    },
+    {
+      "id": 4,
+      "urun_adi": "1kg Domates",
+      "sku": "DOMATES-1KG",
+      "aciklama": "Taze tarla domatesi"
+    },
+    {
+      "id": 5,
+      "urun_adi": "200gr Beyaz Peynir",
+      "sku": "PEYNIR-200GR",
+      "aciklama": "Kahvaltılık tam yağlı beyaz peynir"
+    }
+  ],
+  "stoklar": [
+    {
+      "id": 1,
+      "miktar": 1000,
+      "kritik_seviye": null,
+      "lokasyon_id": 1,
+      "urun_id": 1
+    },
+    {
+      "id": 2,
+      "miktar": 500,
+      "kritik_seviye": null,
+      "lokasyon_id": 1,
+      "urun_id": 2
+    },
+    {
+      "id": 3,
+      "miktar": 2000,
+      "kritik_seviye": null,
+      "lokasyon_id": 1,
+      "urun_id": 3
+    },
+    {
+      "id": 4,
+      "miktar": 800,
+      "kritik_seviye": null,
+      "lokasyon_id": 1,
+      "urun_id": 4
+    },
+    {
+      "id": 5,
+      "miktar": 400,
+      "kritik_seviye": null,
+      "lokasyon_id": 1,
+      "urun_id": 5
+    },
+    {
+      "id": 6,
+      "miktar": 50,
+      "kritik_seviye": 20,
+      "lokasyon_id": 2,
+      "urun_id": 1
+    },
+    {
+      "id": 7,
+      "miktar": 30,
+      "kritik_seviye": 10,
+      "lokasyon_id": 2,
+      "urun_id": 2
+    },
+    {
+      "id": 8,
+      "miktar": 100,
+      "kritik_seviye": 40,
+      "lokasyon_id": 2,
+      "urun_id": 3
+    },
+    {
+      "id": 9,
+      "miktar": 40,
+      "kritik_seviye": 15,
+      "lokasyon_id": 2,
+      "urun_id": 5
+    },
+    {
+      "id": 10,
+      "miktar": 60,
+      "kritik_seviye": 25,
+      "lokasyon_id": 3,
+      "urun_id": 1
+    },
+    {
+      "id": 11,
+      "miktar": 45,
+      "kritik_seviye": 15,
+      "lokasyon_id": 3,
+      "urun_id": 2
+    },
+    {
+      "id": 12,
+      "miktar": 80,
+      "kritik_seviye": 30,
+      "lokasyon_id": 3,
+      "urun_id": 4
+    }
+  ],
+  "sevkiyatlar": [],
+  "sevkiyat_detaylari": []
+}
