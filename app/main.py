@@ -34,7 +34,7 @@ from app.api.endpoints import (
 def create_tables():
     Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Damla <3 Ugur")
+app = FastAPI(title="Market Yönetim")
 
 @app.on_event("startup")
 def on_startup():
