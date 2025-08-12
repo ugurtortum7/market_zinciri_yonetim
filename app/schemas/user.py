@@ -1,11 +1,10 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from typing import Optional
 
 from .lokasyon import Lokasyon
 
 class UserBase(BaseModel):
     kullanici_adi: str
-    email: Optional[str] = None
     rol: str
     lokasyon_id: int
 
