@@ -21,6 +21,7 @@ class Siparis(Base):
         cascade="all, delete-orphan"
     )
 
+
 class SiparisDetay(Base):
     __tablename__ = "siparis_detaylari"
 
@@ -30,13 +31,8 @@ class SiparisDetay(Base):
 
     siparis_id = Column(Integer, ForeignKey("siparisler.id"), nullable=False)
     urun_id = Column(Integer, ForeignKey("urunler.id"), nullable=False)
+    fatura_id = Column(Integer, ForeignKey("faturalar.id"))
 
     siparis = relationship("Siparis", back_populates="detaylar")
     urun = relationship("Urun")
-
-    fatura = relationship(
-    "Fatura",
-    back_populates="siparis",
-    uselist=False, # Bire-bir ilişki olduğunu belirtir
-    cascade="all, delete-orphan"
-)
+    fatura = relationship("Fatura", back_populates="siparis_detaylari", uselist=False)

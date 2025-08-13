@@ -15,4 +15,4 @@ class Fatura(Base):
 
     # Siparis modeli ile ilişki kuruyoruz.
     # `back_populates` sayesinde Siparis modelinden de Fatura'ya erişebileceğiz.
-    siparis = relationship("Siparis", back_populates="fatura")
+    siparis_detaylari = relationship("SiparisDetay", back_populates="fatura")
