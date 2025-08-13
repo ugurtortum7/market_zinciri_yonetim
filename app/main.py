@@ -17,6 +17,8 @@ from app.models.satis import Satis, SatisDetay
 from app.models.favoriler import Favori
 from app.models.sepet import Sepet, SepetUrunu
 from app.models.siparis import Siparis, SiparisDetay
+from app.models.fatura import Fatura
+
 
 # API Router'lar
 from app.api.endpoints import (
@@ -73,7 +75,8 @@ async def import_data(file: UploadFile = File(...)):
             "sepetler": Sepet,
             "sepet_urunleri": SepetUrunu,
             "siparisler": Siparis,
-            "siparis_detaylari": SiparisDetay
+            "siparis_detaylari": SiparisDetay,
+            "faturalar": Fatura,
         }
 
         for table_name, records in data.items():

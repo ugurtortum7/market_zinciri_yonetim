@@ -7,13 +7,10 @@ from app.models.urun import Urun
 
 log = get_logger("zamanlanmis_gorev")
 
-# --- YENİ İŞ KURALI: GÜNLÜK SEVKİYAT PAKETİ ---
-# Burada, ürünlerin SKU'larını ve gönderilecek miktarları tanımlıyoruz.
-# SKU kullanmak, ID'lerin değişebileceği durumlara karşı daha sağlamdır.
 SEVKIYAT_PAKETI = {
-    "SUT-TY-1L": 50,          # Sütün SKU'su ve gönderilecek miktar
-    "SABUN-SV-500mL": 10,   # Sıvı Sabunun SKU'su ve gönderilecek miktar
-    "EKMEK-250GR": 100        # Ekmeğin SKU'su ve gönderilecek miktar
+    "SUT-TY-1L": 50,  
+    "SABUN-SV-500mL": 10,   
+    "EKMEK-250GR": 100       
 }
 
 def gunluk_standart_sevkiyat():

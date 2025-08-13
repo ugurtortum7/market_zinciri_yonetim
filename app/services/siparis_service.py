@@ -7,7 +7,7 @@ from app import models
 from app.models.user import User
 from app.models.siparis import Siparis, SiparisDetay
 from app.schemas.siparis_schema import SiparisCreate
-from . import sepet_service, stok_service
+from . import sepet_service, stok_service, fatura_service
 from app.core.logging_config import get_logger
 log = get_logger(__name__)
 
@@ -76,15 +76,28 @@ def create_order_from_cart(db: Session, kullanici: User, siparis_data: SiparisCr
 
         db.commit()
         db.refresh(yeni_siparis)
+
+        # 5. Sipariş başarıyla oluşturulduktan sonra faturasını oluştur.
+        # Bu işlemi ana commit'ten sonra yapıyoruz ki fatura oluşturma
+        # başarısız olursa, siparişin kendisi iptal olmasın.
+        try:
+            # Kullanıcı ve detaylar gibi ilişkili verilere PDF'te erişebilmek için
+            # siparişi yeniden sorgulamak en güvenli yoldur.
+            siparis_for_invoice = db.query(Siparis).options(
+                joinedload(Siparis.kullanici),
+                joinedload(Siparis.detaylar)
+            ).filter(Siparis.id == yeni_siparis.id).one()
+
+            fatura_service.generate_invoice_pdf(db=db, siparis=siparis_for_invoice)
+        except Exception as invoice_error:
+            # Fatura oluşturma hatasını logla ama kullanıcıya hata döndürme
+            # çünkü siparişleri başarıyla alındı. Bu bir arka plan hatasıdır.
+            log.error(f"Sipariş {yeni_siparis.id} oluşturuldu ancak fatura hatası: {invoice_error}")
+
+
         return yeni_siparis
-    
+
     except Exception as e:
         db.rollback()
         log.error(f"Sipariş oluşturma sırasında hata: {e}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Sipariş oluşturulurken beklenmedik bir hata oluştu.")
-
-def get_kullanici_siparisleri(db: Session, kullanici_id: int):
-    """
-    Bir kullanıcının tüm geçmiş siparişlerini listeler.
-    """
-    return db.query(Siparis).filter(Siparis.kullanici_id == kullanici_id).order_by(Siparis.siparis_tarihi.desc()).all()

@@ -33,3 +33,10 @@ class SiparisDetay(Base):
 
     siparis = relationship("Siparis", back_populates="detaylar")
     urun = relationship("Urun")
+
+    fatura = relationship(
+    "Fatura",
+    back_populates="siparis",
+    uselist=False, # Bire-bir ilişki olduğunu belirtir
+    cascade="all, delete-orphan"
+)
