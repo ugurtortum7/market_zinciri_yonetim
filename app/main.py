@@ -6,6 +6,7 @@ from app.db.session import SessionLocal, engine
 from app.db.base_class import Base
 import json
 from typing import Dict, Any
+from fastapi.middleware.cors import CORSMiddleware
 
 # Modeller
 from app.models.user import User
@@ -158,3 +159,17 @@ app.include_router(favoriler_api.router, prefix="/favoriler", tags=["Favoriler"]
 app.include_router(sepet_api.router, prefix="/sepet", tags=["Sepet"])
 app.include_router(siparis_api.router, prefix="/siparisler", tags=["Siparişler"])
 app.include_router(gorevler_api.router, prefix="/gorevler", tags=["Zamanlanmış Görevler"])
+
+
+origins = [
+    "http://localhost:5173",  # local frontend
+    "https://my-frontend-project.up.railway.app"  # canlı frontend URL
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # sadece bu adreslerden gelen istekler kabul edilir
+    allow_credentials=True,
+    allow_methods=["*"],     # GET, POST, PUT, DELETE vb.
+    allow_headers=["*"],     # Content-Type, Authorization vb.
+)

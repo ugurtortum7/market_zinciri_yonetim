@@ -21,26 +21,21 @@ def gunluk_standart_sevkiyat():
     
     db = SessionLocal()
     try:
-        # 1. Adım: Sistemdeki tüm süpermarketleri bul.
         tum_supermarketler = db.query(Lokasyon).filter(Lokasyon.tip == "SUPERMARKET").all()
         if not tum_supermarketler:
             log.warning("Sistemde hiç süpermarket bulunamadı. Görev sonlandırılıyor.")
             return
 
-        # 2. Adım: Sevk edilecek ürünlerin veritabanı nesnelerini SKU'larına göre bul.
         gonderilecek_sku_listesi = list(SEVKIYAT_PAKETI.keys())
         urun_nesneleri = db.query(Urun).filter(Urun.sku.in_(gonderilecek_sku_listesi)).all()
         
-        # Kolay erişim için SKU'dan ürün nesnesine bir harita (dictionary) oluşturalım.
         urun_haritasi = {urun.sku: urun for urun in urun_nesneleri}
 
         log.info(f"{len(tum_supermarketler)} süpermarket ve {len(urun_nesneleri)} çeşit ürün için sevkiyat planlanıyor.")
 
-        # 3. Adım: Her bir süpermarket için sevkiyat oluştur.
         for market in tum_supermarketler:
             log.info(f"'{market.ad}' için sevkiyat hazırlanıyor...")
 
-            # Sevkiyat şeması için ürün listesini hazırlayalım.
             urunler_listesi = []
             for sku, miktar in SEVKIYAT_PAKETI.items():
                 if sku in urun_haritasi:
@@ -51,7 +46,6 @@ def gunluk_standart_sevkiyat():
                 else:
                     log.error(f"'{sku}' SKU'lu ürün veritabanında bulunamadı! Bu ürün sevkiyattan atlanacak.")
             
-            # Eğer gönderilecek en az bir geçerli ürün varsa sevkiyatı oluştur.
             if not urunler_listesi:
                 log.warning(f"'{market.ad}' için gönderilecek geçerli ürün bulunamadı. Bu market için sevkiyat oluşturulmuyor.")
                 continue
