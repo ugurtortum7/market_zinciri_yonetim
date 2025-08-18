@@ -162,8 +162,8 @@ app.include_router(gorevler_api.router, prefix="/gorevler", tags=["Zamanlanmış
 
 
 origins = [
-    "http://localhost:5173",  # local frontend
-    "https://my-frontend-project.up.railway.app"  # canlı frontend URL
+    "http://localhost:5173",
+    "https://my-frontend-project.up.railway.app" # Belki burada eski bir deneme kalmıştır
 ]
 
 app.add_middleware(
