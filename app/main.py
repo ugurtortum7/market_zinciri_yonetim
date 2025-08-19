@@ -163,7 +163,7 @@ app.include_router(gorevler_api.router, prefix="/gorevler", tags=["Zamanlanmış
 
 origins = [
     "http://localhost:5173",
-    "https://market-front-psi.vercel.app" # Belki burada eski bir deneme kalmıştır
+    "https://market-front-psi.vercel.app"  # Sondaki / olmadan
 ]
 
 app.add_middleware(
