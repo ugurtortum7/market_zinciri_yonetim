@@ -5,6 +5,7 @@ class UrunBase(BaseModel):
     urun_adi: str
     sku: str
     aciklama: Optional[str] = None
+    resim_url: Optional[str] = None
 
 class UrunCreate(UrunBase):
     pass

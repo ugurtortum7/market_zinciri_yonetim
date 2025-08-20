@@ -9,5 +9,6 @@ class Urun(Base):
     urun_adi = Column(String(150), nullable=False)
     sku = Column(String(50), unique=True, index=True, nullable=False)
     aciklama = Column(Text, nullable=True)
+    resim_url = Column(String(255), nullable=True)
 
     favoriler = relationship("Favori", back_populates="urun")
