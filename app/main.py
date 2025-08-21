@@ -38,7 +38,8 @@ from app.api.endpoints import (
     favoriler_api,
     sepet_api,
     siparis_api,
-    gorevler_api
+    gorevler_api,
+    kategoriler
 )
 
 app = FastAPI(title="Market Yönetim")
@@ -119,6 +120,7 @@ app.include_router(favoriler_api.router, prefix="/favoriler", tags=["Favoriler"]
 app.include_router(sepet_api.router, prefix="/sepet", tags=["Sepet"])
 app.include_router(siparis_api.router, prefix="/siparisler", tags=["Siparişler"])
 app.include_router(gorevler_api.router, prefix="/gorevler", tags=["Zamanlanmış Görevler"])
+app.include_router(kategoriler.router, prefix="/kategoriler", tags=["Kategori Yönetimi"])
 
 
 origins = [
