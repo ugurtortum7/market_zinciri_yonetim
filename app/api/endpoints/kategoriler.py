@@ -1,4 +1,5 @@
 # app/api/endpoints/kategoriler.py
+
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -6,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.api import deps
 from app.schemas.kategori import Kategori, KategoriCreate
 from app.services import kategori_service
+from app.models.user import User
 
 router = APIRouter()
 
@@ -16,7 +18,7 @@ def read_kategoriler(
     limit: int = 100,
 ):
     """
-    Tüm kategorileri listeler.
+    Tüm kategorileri listeler. (Herkese açık)
     """
     kategoriler = kategori_service.get_kategoriler(db, skip=skip, limit=limit)
     return kategoriler
@@ -26,10 +28,10 @@ def create_kategori(
     *,
     db: Session = Depends(deps.get_db),
     kategori_in: KategoriCreate,
-    # TODO: Bu endpoint'i yönetici korumasına al
+    current_user: User = Depends(deps.get_current_active_manager_user),
 ):
     """
-    Yeni bir kategori oluşturur.
+    Yeni bir kategori oluşturur. (Yönetici Korumalı)
     """
     kategori = kategori_service.get_kategori_by_ad(db, ad=kategori_in.ad)
     if kategori:
