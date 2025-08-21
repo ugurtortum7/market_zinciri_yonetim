@@ -1,7 +1,7 @@
 from .token import Token, TokenData
 from .user import User, UserCreate, UserBase
 from .lokasyon import Lokasyon, LokasyonCreate, LokasyonBase
-from .urun import Urun, UrunCreate
+from .urun import Urun, UrunCreate, UrunUpdate
 from .stok import Stok, StokCreate, StokUpdateKritikSeviye
 from .sevkiyat import Sevkiyat, SevkiyatCreate, SevkiyatUrun
 from .satis import SatisCreate
