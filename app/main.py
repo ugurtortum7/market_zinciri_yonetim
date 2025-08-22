@@ -1,5 +1,3 @@
-# app/main.py
-
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
 from app.db.session import SessionLocal, engine
@@ -7,13 +5,8 @@ from app.db.base_class import Base
 import json
 from typing import Dict, Any
 from fastapi.middleware.cors import CORSMiddleware
-
-# ===== DEĞİŞİKLİK: Gerekli yeni importlar eklendi =====
 from app.schemas.user import UserCreate
 from app.services import user_service
-# ===== DEĞİŞİKLİK BİTTİ =====
-
-# Modeller
 from app.models.user import User
 from app.models.lokasyon import Lokasyon
 from app.models.urun import Urun
@@ -24,7 +17,7 @@ from app.models.favoriler import Favori
 from app.models.sepet import Sepet, SepetUrunu
 from app.models.siparis import Siparis, SiparisDetay
 from app.models.fatura import Fatura
-
+from app.core import cloudinary_config
 
 # API Router'lar
 from app.api.endpoints import (
@@ -39,7 +32,8 @@ from app.api.endpoints import (
     sepet_api,
     siparis_api,
     gorevler_api,
-    kategoriler
+    kategoriler,
+    upload
 )
 
 app = FastAPI(title="Market Yönetim")
@@ -121,7 +115,7 @@ app.include_router(sepet_api.router, prefix="/sepet", tags=["Sepet"])
 app.include_router(siparis_api.router, prefix="/siparisler", tags=["Siparişler"])
 app.include_router(gorevler_api.router, prefix="/gorevler", tags=["Zamanlanmış Görevler"])
 app.include_router(kategoriler.router, prefix="/kategoriler", tags=["Kategori Yönetimi"])
-
+app.include_router(upload.router, prefix="/upload", tags=["Dosya Yükleme"])
 
 origins = [
     "http://localhost:5173",
