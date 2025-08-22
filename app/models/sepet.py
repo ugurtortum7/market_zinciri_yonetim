@@ -10,6 +10,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.db.base_class import Base
+from sqlalchemy.ext.hybrid import hybrid_property
 
 class Sepet(Base):
     """
@@ -37,6 +38,11 @@ class Sepet(Base):
         back_populates="sepet", 
         cascade="all, delete-orphan"
     )
+    @hybrid_property
+    def toplam_tutar(self):
+        if not self.urunler:
+            return 0.0
+        return sum(item.urun.fiyat * item.miktar for item in self.urunler)    
 
 class SepetUrunu(Base):
     """
