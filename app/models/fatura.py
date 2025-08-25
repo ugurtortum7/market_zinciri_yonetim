@@ -14,5 +14,6 @@ class Fatura(Base):
     fatura_yolu = Column(String(255), nullable=False)
     olusturulma_tarihi = Column(DateTime, default=datetime.now)
 
-    # Bir fatura, bir siparişe aittir.
+    # DÜZELTME: 'Siparis' modelindeki 'fatura' ilişkisine geri bağlanması için
+    # back_populates eklendi.
     siparis = relationship("Siparis", back_populates="fatura")

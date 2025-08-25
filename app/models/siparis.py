@@ -19,10 +19,9 @@ class Siparis(Base):
 
     kullanici = relationship("User")
     
-    # Sipariş, birçok sipariş detayına sahiptir.
     detaylar = relationship("SiparisDetay", back_populates="siparis", cascade="all, delete-orphan")
     
-    # Bir siparişin bir faturası vardır.
+    # DÜZELTME: 'Fatura' modelindeki 'siparis' ilişkisine geri bağlanıyor.
     fatura = relationship("Fatura", uselist=False, back_populates="siparis", cascade="all, delete-orphan")
 
 class SiparisDetay(Base):
