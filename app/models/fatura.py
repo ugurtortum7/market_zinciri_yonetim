@@ -1,7 +1,9 @@
 # app/models/fatura.py
+
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
+
 from app.db.base_class import Base
 
 class Fatura(Base):
@@ -12,4 +14,5 @@ class Fatura(Base):
     fatura_yolu = Column(String(255), nullable=False)
     olusturulma_tarihi = Column(DateTime, default=datetime.now)
 
-    siparis = relationship("Siparis")
+    # Bir fatura, bir siparişe aittir.
+    siparis = relationship("Siparis", back_populates="fatura")
