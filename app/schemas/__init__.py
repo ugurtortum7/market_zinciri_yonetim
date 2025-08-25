@@ -8,3 +8,4 @@ from .satis import SatisCreate
 from .favoriler_schema import Favori, FavoriCreate
 from .sepet_schema import Sepet, SepetUrunu, SepetUrunuCreate, SepetUrunuUpdate
 from .siparis_schema import Siparis, SiparisCreate, SiparisDetay
+from .fatura_schema import Fatura, FaturaCreate
