@@ -32,15 +32,18 @@ def generate_invoice_pdf(db: Session, siparis: models.Siparis):
         c = canvas.Canvas(dosya_yolu, pagesize=letter)
         width, height = letter
 
-        # Türkçe karakterler için font ayarı
+        # Türkçe karakter desteği için font ayarı
         try:
-            # Bu font dosyasının projenizin ana dizininde olması gerekir.
             pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))
             FONT_NORMAL = "DejaVuSans"
-            FONT_BOLD = "DejaVuSans-Bold" # Kalın versiyonu için (eğer varsa)
-            pdfmetrics.registerFont(TTFont(FONT_BOLD, 'DejaVuSans-Bold.ttf'))
+            FONT_BOLD = "DejaVuSans-Bold"
+            # Kalın fontu da kaydetmeye çalış, yoksa normali kullan
+            try:
+                pdfmetrics.registerFont(TTFont(FONT_BOLD, 'DejaVuSans-Bold.ttf'))
+            except:
+                FONT_BOLD = "DejaVuSans" 
         except:
-            log.warning("DejaVuSans fontu bulunamadı, standart font kullanılıyor.")
+            log.warning("DejaVuSans fontu bulunamadı. Standart font kullanılıyor.")
             FONT_NORMAL = "Helvetica"
             FONT_BOLD = "Helvetica-Bold"
 
@@ -50,7 +53,7 @@ def generate_invoice_pdf(db: Session, siparis: models.Siparis):
 
         # ---- Müşteri ve Sipariş Bilgileri ----
         c.setFont(FONT_NORMAL, 12)
-        # DÜZELTME: Doğru kullanıcı adı alanı kullanılıyor.
+        # ===== DÜZELTME 1: Doğru kullanıcı adı alanı kullanıldı =====
         c.drawString(inch, height - 1.5 * inch, f"Müşteri: {siparis.kullanici.kullanici_adi}")
         c.drawString(inch, height - 1.7 * inch, f"Sipariş ID: {siparis.id}")
         c.drawString(inch, height - 1.9 * inch, f"Sipariş Tarihi: {siparis.siparis_tarihi.strftime('%d-%m-%Y %H:%M')}")
@@ -69,7 +72,7 @@ def generate_invoice_pdf(db: Session, siparis: models.Siparis):
         c.setFont(FONT_NORMAL, 10)
         y_pos -= 0.3 * inch
         for detay in siparis.detaylar:
-            # DÜZELTME: Gerçek ürün adı (ilişkiden gelen) kullanılıyor.
+            # ===== DÜZELTME 2: Gerçek ürün adı (ilişkiden gelen) kullanılıyor =====
             urun_adi = detay.urun.urun_adi if detay.urun else "Bilinmeyen Ürün"
             miktar = str(detay.miktar)
             birim_fiyat = f"{Decimal(detay.urun_fiyati):.2f} TL"
@@ -89,7 +92,6 @@ def generate_invoice_pdf(db: Session, siparis: models.Siparis):
 
         c.save()
 
-        # Veritabanına Fatura kaydını oluştur veya güncelle
         mevcut_fatura = db.query(models.Fatura).filter(models.Fatura.siparis_id == siparis.id).first()
         if mevcut_fatura:
             mevcut_fatura.fatura_yolu = dosya_yolu
