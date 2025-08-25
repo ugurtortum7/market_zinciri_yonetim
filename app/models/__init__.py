@@ -7,3 +7,4 @@ from .satis import Satis, SatisDetay
 from .favoriler import Favori
 from .sepet import Sepet, SepetUrunu
 from .siparis import Siparis, SiparisDetay
+from .fatura import Fatura
