@@ -9,8 +9,9 @@ from datetime import datetime
 from app import models
 from app.models.user import User
 from app.models.siparis import Siparis, SiparisDetay
+from app.models.sepet import SepetUrunu # SepetUrunu modelini import ediyoruz
 from app.schemas.siparis_schema import SiparisCreate
-from . import sepet_service, stok_service, fatura_service
+from . import stok_service, fatura_service
 from app.core.logging_config import get_logger
 
 log = get_logger(__name__)
@@ -18,51 +19,44 @@ log = get_logger(__name__)
 def get_kullanici_siparisleri(db: Session, kullanici_id: int) -> List[Siparis]:
     """
     Kullanıcının geçmiş siparişlerini, detayları ve ürün bilgileriyle birlikte getirir.
-    Bu, frontend'de "Internal Server Error" alınmasını engelleyecektir.
+    Bu, frontend'de siparişlerin görünmemesi sorununu çözer.
     """
     return (
         db.query(models.Siparis)
         .options(
-            joinedload(models.Siparis.detaylar)
-            .joinedload(models.SiparisDetay.urun)
+            # Siparis'e bağlı olan 'detaylar' listesini yükle.
+            # Her 'detay' objesinin içindeki 'urun' ilişkisini de yükle.
+            joinedload(models.Siparis.detaylar).joinedload(models.SiparisDetay.urun)
         )
         .filter(models.Siparis.kullanici_id == kullanici_id)
-        .order_by(models.Siparis.siparis_tarihi.desc()) # Siparişleri yeniden eskiye sırala
+        .order_by(models.Siparis.siparis_tarihi.desc())
         .all()
     )
 
 def create_order_from_cart(db: Session, kullanici: User, siparis_data: SiparisCreate) -> Siparis:
     """
     Kullanıcının mevcut sepetinden bir sipariş oluşturur.
-    - Stokları son bir kez kontrol eder ve düşürür.
-    - Sepeti temizler.
-    - Tüm bu işlemleri tek bir transaction içinde yapar.
     """
-    # 1. Kullanıcının sepetini ve içindeki ürünleri al.
     sepet = db.query(models.Sepet).options(
-        joinedload(models.Sepet.urunler).joinedload(models.SepetUrunu.urun)
+        joinedload(models.Sepet.urunler).joinedload(SepetUrunu.urun)
     ).filter(models.Sepet.kullanici_id == kullanici.id).first()
 
     if not sepet or not sepet.urunler:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Sipariş oluşturmak için sepetinizde ürün olmalıdır.")
 
-    # 2. Toplam tutarı hesapla ve stokları son kez kontrol et.
     toplam_tutar = Decimal(0)
     
-    # Siparişin TORMAR lokasyonundan düşmesi için market lokasyonunu bul
     market_lokasyonu = db.query(models.Lokasyon).filter(models.Lokasyon.ad == "TORMAR").first()
     if not market_lokasyonu:
         raise HTTPException(status_code=500, detail="TORMAR market lokasyonu bulunamadı.")
 
     for item in sepet.urunler:
-        # Gerçek ürün fiyatını kullanıyoruz
         if not item.urun or item.urun.fiyat is None:
             raise HTTPException(status_code=500, detail=f"'{item.urun.urun_adi if item.urun else 'Bilinmeyen'}' ürününün fiyat bilgisi bulunamadı.")
         
-        fiyat = Decimal(str(item.urun.fiyat)) # Fiyatı Decimal'e çeviriyoruz
+        fiyat = Decimal(str(item.urun.fiyat))
         toplam_tutar += item.miktar * fiyat
         
-        # Stokları TORMAR lokasyonundan kontrol et
         market_stok = stok_service.get_stok_by_lokasyon_and_urun(db, lokasyon_id=market_lokasyonu.id, urun_id=item.urun_id)
         if not market_stok or market_stok.miktar < item.miktar:
             raise HTTPException(
@@ -71,7 +65,6 @@ def create_order_from_cart(db: Session, kullanici: User, siparis_data: SiparisCr
             )
 
     try:
-        # 3. Sipariş ve Sipariş Detay kayıtlarını oluştur.
         yeni_siparis = Siparis(
             kullanici_id=kullanici.id,
             teslimat_adresi=siparis_data.teslimat_adresi,
@@ -80,11 +73,9 @@ def create_order_from_cart(db: Session, kullanici: User, siparis_data: SiparisCr
         db.add(yeni_siparis)
 
         for item in sepet.urunler:
-            # TORMAR stoğunu düşür.
             market_stok = stok_service.get_stok_by_lokasyon_and_urun(db, lokasyon_id=market_lokasyonu.id, urun_id=item.urun_id)
             market_stok.miktar -= item.miktar
             
-            # Sipariş detayı oluştur.
             siparis_detayi = SiparisDetay(
                 siparis=yeni_siparis,
                 urun_id=item.urun_id,
@@ -93,13 +84,11 @@ def create_order_from_cart(db: Session, kullanici: User, siparis_data: SiparisCr
             )
             db.add(siparis_detayi)
             
-        # 4. Sepetteki ürünleri temizle.
-        db.query(models.SepetUrunu).filter(models.SepetUrunu.sepet_id == sepet.id).delete(synchronize_session=False)
+        db.query(SepetUrunu).filter(SepetUrunu.sepet_id == sepet.id).delete(synchronize_session=False)
 
         db.commit()
         db.refresh(yeni_siparis)
 
-        # 5. Sipariş başarıyla oluşturulduktan sonra faturasını oluştur.
         try:
             siparis_for_invoice = db.query(Siparis).options(
                 joinedload(Siparis.kullanici),
