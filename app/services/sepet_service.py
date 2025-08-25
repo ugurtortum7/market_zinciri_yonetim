@@ -12,18 +12,30 @@ from . import stok_service
 
 def get_veya_create_kullanici_sepeti(db: Session, kullanici_id: int) -> Sepet:
     """
-    Bir kullanıcının sepetini getirir. Eğer sepeti yoksa,
-    otomatik olarak yeni ve boş bir sepet oluşturur ve onu döndürür.
+    Bir kullanıcının sepetini, içindeki ürünler ve ürün detaylarıyla birlikte getirir.
+    Eğer sepeti yoksa, otomatik olarak yeni ve boş bir sepet oluşturur.
+    Bu versiyon, boş sepetlerde çökme sorununu çözer.
     """
-    sepet = db.query(Sepet).filter(Sepet.kullanici_id == kullanici_id).first()
+    sepet = (
+        db.query(Sepet)
+        .options(joinedload(Sepet.urunler).joinedload(SepetUrunu.urun))
+        .filter(Sepet.kullanici_id == kullanici_id)
+        .first()
+    )
     
     if not sepet:
         yeni_sepet = Sepet(kullanici_id=kullanici_id)
         db.add(yeni_sepet)
         db.commit()
         db.refresh(yeni_sepet)
-        return yeni_sepet
-        
+        # Yeni oluşturulan sepeti, ilişkileriyle birlikte tekrar sorgulayalım ki yapı tutarlı olsun
+        sepet = (
+            db.query(Sepet)
+            .options(joinedload(Sepet.urunler).joinedload(SepetUrunu.urun))
+            .filter(Sepet.kullanici_id == kullanici_id)
+            .first()
+        )
+
     return sepet
 
 def sepete_urun_ekle(db: Session, kullanici_id: int, urun_data: SepetUrunuCreate) -> Sepet:
