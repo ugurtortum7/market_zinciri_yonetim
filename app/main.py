@@ -122,10 +122,6 @@ origins = [
     "https://market-front-psi.vercel.app"
 ]
 
-print("----- CORS YAPILANDIRMASI YÜKLENDİ -----")
-print("İzin verilen origin'ler:", origins)
-print("------------------------------------")
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
